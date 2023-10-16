@@ -1,0 +1,14 @@
+file: mc.csv
+
+call: ml max=100
+corr: 0.6239427406813316
+call: ml max=1000
+corr: 0.7365359086198322
+call: ml max=10000
+corr: 0.7365359086198322
+call: sp max=100
+corr: nan
+call: sl max=100
+corr: 0.14630777227136577
+call: rel_trg max=100
+corr: 0.5774151907346404
