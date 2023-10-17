@@ -55,7 +55,7 @@ def dmPairSim(word1, word2, call, count):
 
 def runFileApiCall(file, call, n):
     df = pd.read_csv(file,sep=';', names=['W1','W2','human_sim'])
-    df["sim"] = 0
+    df["sim"] = float(0)
     for i,row in df.iterrows():
         row = row.copy()
         w1 = row["W1"]
