@@ -2,7 +2,10 @@ from datamuse import datamuse
 import pandas as pd
 import numpy as np
 from scipy.stats import pearsonr
+import os
 
+from sematch.semantic.graph import DBpediaDataTransform, Taxonomy
+from sematch.semantic.similarity import ConceptSimilarity
 
 api = datamuse.Datamuse()
 
@@ -68,13 +71,52 @@ def test():
     print(result)
 
 def test2():    
-    df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim'])
+    df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
     df["sim"] = float (0)
     for i,row in df.iterrows():
         row = row.copy()
-        sentence = row['S1']
-        df.loc[i,"sim"] = jaccardSim()
-    print(df)
-    print(getPearsons(df["human_sim"],df["sim"]))
+        s1 = row["S1"]
+        s2 = row["S2"]
+        s1_tokens = preprocess(s1)
+        s2_tokens = prepreocess(s2)
+        s1_sets = []
+        s2_sets = []
+        for token in s1_tokens:
+            #get set of words with best method
+            #append the s1_sets list
+            continue
+        #get intersection of all sets in s1_sets and add those to s1_tokens
 
-test()
+        for token in s2_tokens:
+            #get set of words with best method
+            #append the s2_sets list
+            continue
+        #get intersection of all sets in s2_sets and add those to s2_tokens
+        
+        #jaccardsim the tokens
+        #df.loc[i,"sim"] = jaccardsim
+        continue
+    
+    getPearsons(df["human_sim"], df["sim"])
+
+def getSimEvalCorr():
+    data_sets = ['rg','mc','wordsim']
+    path = "measures"
+    wd = os.getcwd()
+    path = os.path.join(wd, path)
+    all_files = []
+    for root,dirs,files in os.walk(path):
+        for file in files:
+            if file.endswith(".csv") and any(ele in file for ele in data_sets):
+                relative_path = os.path.relpath(os.path.join(file, root))
+                relative_path = os.path.join(relative_path, file)
+                all_files.append(relative_path)
+    for file in all_files:
+        df = pd.read_csv(file,sep=';', names=['W1','W2','human_sim','sim'])
+        print(file, ': ',getPearsons(df["human_sim"], df["sim"]))
+
+def test4():
+    concept = ConceptSimilarity(Taxonomy(DBpediaDataTransform()),'models/dbpedia_type_ic.txt')
+    print(concept.name2concept('actor'))
+
+test4()

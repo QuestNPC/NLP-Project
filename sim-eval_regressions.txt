@@ -1,0 +1,31 @@
+measures\corpus-context-window\mc-frame.csv :  0.7228703016706712
+measures\corpus-context-window\rg-frame.csv :  0.7529985165450706
+measures\corpus-context-window\wordsim-frame.csv :  0.46791308515112845
+
+measures\corpus-syn-context\mc-frame.csv :  0.7561246613689719
+measures\corpus-syn-context\rg-frame.csv :  0.7314243170389128
+measures\corpus-syn-context\wordsim-frame.csv :  0.384201607806767
+
+measures\def-wiktionary\mc-frame.csv :  0.6254796703781974
+measures\def-wiktionary\rg-frame.csv :  0.6555013710801368
+measures\def-wiktionary\wordsim-frame.csv :  0.41618713732713075
+
+measures\random\mc-frame.csv :  -0.22002996224901844
+measures\random\rg-frame.csv :  -0.06046558977592481
+measures\random\wordsim-frame.csv :  -0.15811718965829652
+
+measures\sample\mc-frame.csv :  0.7371657147016877
+measures\sample\rg-frame.csv :  0.6457898877961036
+measures\sample\wordsim-frame.csv :  0.5277840941181042
+
+measures\sample-with-output\mc-frame.csv :  0.7371657147016877
+measures\sample-with-output\rg-frame.csv :  0.6457898877961036
+measures\sample-with-output\wordsim-frame.csv :  0.5277840941181042
+
+measures\wordnet-jcn\mc-frame.csv :  0.47349668360902086
+measures\wordnet-jcn\rg-frame.csv :  0.575456460328021
+measures\wordnet-jcn\wordsim-frame.csv :  0.2252453492236344
+
+measures\wordnet-lesk\mc-frame.csv :  0.3554105206132904
+measures\wordnet-lesk\rg-frame.csv :  0.34005423132299456
+measures\wordnet-lesk\wordsim-frame.csv :  0.209260451372788
