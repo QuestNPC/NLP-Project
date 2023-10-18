@@ -49,10 +49,6 @@ def stem_tokens(x):
     return [stemmer.stem(w) for w in x]
 
 
-
-fasttext.util.download_model('en', if_exists='ignore')
-ft_en_model = fasttext.load_model('cc.en.300.bin')
-
 def get_ft_sim(s1, s2, ftmodel):
     #no preprocessing as instructed, just splitting to get each word as they appear in sentence
     vec_s1 = np.mean([ftmodel[x] for x in s1.split()], axis=0)
