@@ -18,6 +18,7 @@ rep_antonym = word_antonym_replacer()
 
 def removeStopwords(sentence):
     stopwords = list(set(nltk.corpus.stopwords.words('english')))
+    stopwords.extend(['could', 'would']) #for some reason not included
     stopwords.remove('not') #leave not for antonyms
     x = sentence.split()
     filtered_sentence = [w for w in x if w.isalpha() and w not in stopwords]
