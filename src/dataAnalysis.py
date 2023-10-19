@@ -66,7 +66,8 @@ def runFileApiCall(file, call, n):
         df.loc[i,"sim"] = dmPairSim(w1,w2,call,n)
     return getPearsons(df["human_sim"], df["sim"])
 
-def test():    
+def test():
+    #tätä voi kutsua testaan eri API calleja    
     result = runFileApiCall('datasets/mc.csv', 'rel_trg',500)
     print(result)
 
@@ -121,7 +122,7 @@ def task8(method):
     #loopissa rivetiiäin lausetia läpi
     df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
     df["sim"] = float (0)
-    
+
     concept = ConceptSimilarity(Taxonomy(DBpediaDataTransform()),'models/dbpedia_type_ic.txt')
 
     for i,row in df.iterrows():
@@ -129,7 +130,7 @@ def task8(method):
         s1 = row["S1"]
         s2 = row["S2"]
         s1_tokens = preprocess(s1)
-        s2_tokens = prepreocess(s2)
+        s2_tokens = preprocess(s2)
         
         concepts1 = []
         for token in s1_tokens:
@@ -161,6 +162,7 @@ def task8(method):
         sim = float((sim1+sim2)/2)
         df.loc[i,"sim"] = sim
         getPearsons(df["human_sim"], df["sim"])
-           
 
-test()
+
+if __name__ == "__main__":
+    test()
