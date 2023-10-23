@@ -1,9 +1,28 @@
+PDpedia
 With lemmatization
+non match excluded
 Correlation for  path :  0.3360197942740645
 Correlation for  wup :  0.33601350519499706
 Correlation for  li :  0.33967858086348235
+
+non match included
+Correlation for  path :  0.3228125542413516
+Correlation for  wup :  0.32154130577171774
+Correlation for  li :  0.3246721520607868
 
 without lemmatization
 Correlation for  path :  0.3304775250425785
 Correlation for  wup :  0.33033620344521364
 Correlation for  li :  0.33065139014624495
+
+
+YAGO:
+lemmatization, non matches excluded
+Correlation for  path :  0.7008950572019647
+Correlation for  wup :  0.568236480570865
+Correlation for  li :  0.646562237434859
+
+lemmatization, non matches included
+Correlation for  path :  0.6466412147244027
+Correlation for  wup :  0.4805325175002798
+Correlation for  li :  0.6004241648288253

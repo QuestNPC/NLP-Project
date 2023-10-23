@@ -1,7 +1,7 @@
 S1,S2,human_sim,std,sim
 Would you like to go out to drink with me tonight?,I really don’t know what to eat tonight so I might go out somewhere.,1.01,0.77,0.0
 I advise you to treat this matter very seriously as it is vital.,"You must take this most seriously, it will affect you.",3.38,0.69,0.0
-When I was going out to meet my friends there was a delay at the train station.,The train operator announced to the passengers that the train would be delayed.,3.13,0.68,0.7857142857142857
+When I was going out to meet my friends there was a delay at the train station.,The train operator announced to the passengers that the train would be delayed.,3.13,0.68,0.26190476190476186
 "Does music help you to relax, or does it distract you too much?",Does this sponge look wet or dry to you?,0.1,0.29,0.0
 You must realise that you will definitely be punished if you play with the alarm.,He will be harshly punished for setting the fire alarm off.,2.84,0.87,0.0
 I will make you laugh so much that your sides ache.,When I tell you this you will split your sides laughing.,3.75,0.38,0.0
@@ -39,12 +39,12 @@ The first thing I do in a morning is make myself a cup of coffee.,The first thin
 "Someone spilt a drink accidentally on my shirt, so I changed it.","It appears to have shrunk, it wasn’t that size before I washed it.",0.48,0.72,0.0
 "I’m worried most seriously about the presentation, not the essay.",It is mostly very difficult to gain full marks in today’s exam.,0.77,0.82,0.0
 It is mostly very difficult to gain full marks in today’s exam.,"The exam was really difficult, I’ve got no idea if I’m going to pass.",2.54,0.98,0.0
-Meet me on the hill behind the church in half an hour.,Join me on the hill at the back of the church in thirty minutes time.,3.93,0.25,1.0
+Meet me on the hill behind the church in half an hour.,Join me on the hill at the back of the church in thirty minutes time.,3.93,0.25,0.15476190476190477
 "If you don’t console with a friend, there is a chance you may hurt their feelings.",One of the qualities of a good friend is the ability to console.,3.01,0.85,0.0
 "We tried to bargain with him but it made no difference, he still didn’t change his mind.","I tried bargaining with him, but he just wouldn’t listen.",3.43,0.54,0.0
 It gives me great pleasure to announce the winner of this year’s beauty pageant.,It’s a real pleasure to tell you who has won our annual beauty parade.,3.88,0.24,0.0
 They said they were hoping to go to America on holiday.,"I like to cover myself up in lots of layers, I don’t like the cold.",0.16,0.5,0.0
-Will I have to drive far to get to the nearest petrol station?,Is it much farther for me to drive to the next gas station?,3.84,0.37,1.0
+Will I have to drive far to get to the nearest petrol station?,Is it much farther for me to drive to the next gas station?,3.84,0.37,0.16666666666666666
 I think I know her from somewhere because she has a familiar face.,"You have a very familiar face, where do I know you from?",3.36,0.8,0.0
 I am sorry but I can’t go out as I have a heap of work to do.,I’ve a heap of things to finish so I can’t go out I’m afraid.,3.6,0.72,0.0
 The responsible man felt very guilty when he crashed into the back of someone’s car.,A slow driver can be annoying even though they are driving safely.,0.88,0.75,0.0
@@ -52,14 +52,14 @@ Get that wet dog off my brand new white sofa.,Make that wet hound get off my whi
 He fought in the war in Iraq before being killed in a car crash.,The prejudice I suffered whilst on holiday in Iraq was quite alarming.,0.55,0.65,0.0
 The cat was hungry so he went into the back garden to find lunch.,The hen walked about in the yard eating tasty grain.,1.2,0.82,0.0
 My bedroom wall is lemon coloured but my mother says it is yellow.,"Roses can be different colours, it has to be said red is the best though.",0.68,0.77,0.0
-Would you like to drink this wine with your meal?,Will you drink a glass of wine while you eat?,3.56,0.65,1.0
-"Roses can be different colours, it has to be said red is the best though.","Roses come in many varieties and colours, but yellow is my favourite.",2.83,0.9,1.0
+Would you like to drink this wine with your meal?,Will you drink a glass of wine while you eat?,3.56,0.65,0.25
+"Roses can be different colours, it has to be said red is the best though.","Roses come in many varieties and colours, but yellow is my favourite.",2.83,0.9,0.14285714285714285
 Flies can also carry a lot of disease and cause maggots.,I dry my hair after I wash it or I will get ill.,0.12,0.28,0.0
 Could you climb up the tree and save my cat from jumping please?,Can you get up that tree and rescue my cat otherwise it might jump?,3.83,0.34,0.0
 "The pleasure that I get from studying, is that I learn new things.","I have a doubt about this exam, we never got to study for it.",0.74,0.76,0.0
 The perpetrators of war crimes are rotten to the core.,"There are many global issues that everybody should be aware of, such as the threat of terrorism.",0.95,0.91,0.0
 The damp was mostly in the very corner of the room.,The young lady was somewhat partially burnt from the sun.,0.11,0.31,0.0
-We often ran to school because we were always late.,I knew I was late for my class so I ran all the way to school.,3.1,0.85,1.0
+We often ran to school because we were always late.,I knew I was late for my class so I ran all the way to school.,3.1,0.85,0.18333333333333335
 "I hope you’re taking this seriously, if not you can get out of here.",The difficult course meant that only the strong would survive.,0.5,0.87,0.0
 "I bought a new guitar today, do you like it?",The weapon choice reflects the personality of the carrier.,0.16,0.34,0.0
 I am so hungry I could eat a whole horse plus dessert.,"I could have eaten another meal, I’m still starving.",3.06,0.85,0.0

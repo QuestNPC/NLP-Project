@@ -14,7 +14,6 @@ from nltk.tokenize import word_tokenize
 from nltk.stem.snowball import SnowballStemmer
 
 from nltk.stem import WordNetLemmatizer
-from fuzzywuzzy import fuzz
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 

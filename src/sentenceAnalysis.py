@@ -14,7 +14,7 @@ from scipy.spatial.distance import cosine
 import fasttext
 from breame.spelling import british_spelling_exists, get_american_spelling
 import fasttext.util
-
+from sematch.semantic.similarity import YagoTypeSimilarity
 
 
 api = datamuse.Datamuse()
@@ -145,7 +145,7 @@ def ftAnalysis():
     print('Correlation for: ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
 
 
-def task8():
+def BDpedia(exclude):
     methods = ['path', 'wup','li'] #'lin','jcn', 'res','wpath' ends with certificate expired error
     for method in methods:
         df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
@@ -170,9 +170,9 @@ def task8():
                 concepts2.append(concept.name2concept(token))
             similarities2 = []
 
-            #comment these out to get results where tokens without concept get simimlarity 0
-            concepts1 = [c for c in concepts1 if not c == []]
-            concepts2 = [c for c in concepts2 if not c == []]
+            if exclude:
+                concepts1 = [c for c in concepts1 if not c == []]
+                concepts2 = [c for c in concepts2 if not c == []]
 
             if not (concepts2 == [] or concepts1 == []):
                 for c1 in concepts1:
@@ -198,25 +198,82 @@ def task8():
                 sim2 = np.average(similarities2)
                 sim = float((sim1+sim2)/2)
                 df.loc[i,"sim"] = sim
-        fname = 'results/DBpedia_' + method + '.csv'
+        if exclude:
+            fname = 'results/DBpedia_exlude_' + method + '.csv'
+        else:
+            fname = 'results/DBpedia_' + method + '.csv'
         df.to_csv(fname, index=False, header=True)
 
         print('Correlation for ', method, ': ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
 
-def test5():
-    df1 = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
-    df = df1[['S1','S2']].copy()
-    df['S1_tokens'] = None
-    df['S2_tokens'] = None
-    for i,row in df.iterrows():
-        row = row.copy()
-        s1 = row["S1"]
-        s2 = row["S2"]
-        s1 = preprocessing.preprocess(s1)
-        s2 = preprocessing.preprocess(s2)
-        df.at[i,"S1_tokens"] = s1
-        df.at[i,"S2_tokens"] = s2
-    df.to_csv('preprocess_test2.csv', index=False, sep=';')
+def yago(exclude):
+    yago_sim = YagoTypeSimilarity()
+    methods = ['path', 'wup','li'] #'lin','jcn', 'res','wpath' ends with certificate expired error
+    for method in methods:
+        df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
+        df["sim"] = float (0)
+
+        for i,row in df.iterrows():
+            row = row.copy()
+            s1 = row["S1"]
+            s2 = row["S2"]
+            s1_tokens = preprocessing.preprocess(s1)
+            s2_tokens = preprocessing.preprocess(s2)
+            
+            concepts1 = []
+            for token in s1_tokens:
+                concepts1.append(yago_sim.word2yago(token))
+            similarities1 = []
+
+            concepts2 = []
+            for token in s2_tokens:
+                concepts2.append(yago_sim.word2yago(token))
+            similarities2 = []
+
+            #comment these out to get results where tokens without concept get simimlarity 0
+            
+            if exclude:
+                concepts1 = [c for c in concepts1 if not c == []]
+                concepts2 = [c for c in concepts2 if not c == []]
+
+            if not (concepts2 == [] or concepts1 == []): #just making sure no issues happen if sentences get no matches
+                #stupid tree #1
+                for c1 in concepts1:
+                    max = 0
+                    if not c1 == []:
+                        for c_1 in c1:
+                            for c2 in concepts2:
+                                if not c2 == []:
+                                    for c_2 in c2:
+                                        sim = yago_sim.yago_similarity(c_1, c_2, method)
+                                        if sim > max:
+                                            max =  sim
+                    similarities1.append(max)
+                sim1 = np.average(similarities1)
+
+                #stupid tree #2
+                for c2 in concepts2:
+                    max = 0
+                    if not c2 == []:
+                        for c_2 in c2:
+                            for c1 in concepts1:
+                                if not c1 == []:
+                                    for c_1 in c1:
+                                        sim = yago_sim.yago_similarity(c_2, c_1, method)
+                                        if sim > max:
+                                            max =  sim
+                    similarities2.append(max)
+                sim2 = np.average(similarities2)
+
+                sim = float((sim1+sim2)/2)
+                df.loc[i,"sim"] = sim
+        if exclude:
+            fname = 'results/yago_exlude_' + method + '.csv'
+        else:
+            fname = 'results/yago_' + method + '.csv'
+        df.to_csv(fname, index=False, header=True)
+
+        print('Correlation for ', method, ': ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
 
 def testing():
     #gloveAnalysis(glove)
@@ -225,4 +282,5 @@ def testing():
     pass
 
 if __name__ == "__main__":
-    testing()
+    BDpedia(True)
+    BDpedia(False)

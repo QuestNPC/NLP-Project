@@ -98,7 +98,8 @@ def preprocess2(sentence):
     #very minimal preprocessing for fasttext, GloVe and word2vercor
     
     sentence = str(sentence).lower()
-    sentence = re.sub("[^A-Za-z0-9' ]+", '', sentence)
+    sentence = contractions.fix(sentence)
+    sentence = re.sub("[^A-Za-z0-9]+", '', sentence)
     return sentence
 
 if __name__ == "__main__":
