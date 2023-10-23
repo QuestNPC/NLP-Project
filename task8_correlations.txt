@@ -1,0 +1,9 @@
+With lemmatization
+Correlation for  path :  0.3360197942740645
+Correlation for  wup :  0.33601350519499706
+Correlation for  li :  0.33967858086348235
+
+without lemmatization
+Correlation for  path :  0.3304775250425785
+Correlation for  wup :  0.33033620344521364
+Correlation for  li :  0.33065139014624495

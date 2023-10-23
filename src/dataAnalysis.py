@@ -78,8 +78,6 @@ def test2():
         row = row.copy()
         s1 = row["S1"]
         s2 = row["S2"]
-        s1_tokens = preprocess(s1)
-        s2_tokens = prepreocess(s2)
         s1_sets = []
         s2_sets = []
         for token in s1_tokens:
@@ -115,53 +113,6 @@ def getSimEvalCorr():
     for file in all_files:
         df = pd.read_csv(file,sep=';', names=['W1','W2','human_sim','sim'])
         print(file, ': ',getPearsons(df["human_sim"], df["sim"]))
-
-def task8(method):
-    #method on string joka valitsee millä tavalla similarity otetaan
-
-    #loopissa rivetiiäin lausetia läpi
-    df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
-    df["sim"] = float (0)
-
-    concept = ConceptSimilarity(Taxonomy(DBpediaDataTransform()),'models/dbpedia_type_ic.txt')
-
-    for i,row in df.iterrows():
-        row = row.copy()
-        s1 = row["S1"]
-        s2 = row["S2"]
-        s1_tokens = preprocess(s1)
-        s2_tokens = preprocess(s2)
-        
-        concepts1 = []
-        for token in s1_tokens:
-            concepts1.append(concept.name2concept(token))
-        similarities1 = []
-
-        concepts2 = []
-        for token in s2_tokens:
-            concepts2.append(concept.name2concept(token))
-        similarities2 = []
-        
-        for c1 in concepts1:
-            max = 0
-            for c2 in concepts2:
-                sim = concept.similarity(c1, c2, method)
-                if sim > max:
-                    max =  sim
-            similarities1.append(max)
-        sim1 = similarities1.mean()
-
-        for c2 in concepts2:
-            max = 0
-            for c1 in concepts1:
-                sim = concept.similarity(c2, c1, method)
-                if sim > max:
-                    max =  sim
-            similarities2.append(max)
-        sim2 = similarities2.mean()
-        sim = float((sim1+sim2)/2)
-        df.loc[i,"sim"] = sim
-        getPearsons(df["human_sim"], df["sim"])
 
 
 if __name__ == "__main__":

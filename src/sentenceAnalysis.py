@@ -1,87 +1,207 @@
 from datamuse import datamuse
 import pandas as pd
 import numpy as np
-from scipy.stats import pearsonr
-import os
-import re
-import contractions
 import dataAnalysis
-import nltk
 from nltk.corpus import wordnet
-from antonyms import word_antonym_replacer
-
+import preprocessing
+import torch
+import torchtext
+import gensim.downloader
 from sematch.semantic.graph import DBpediaDataTransform, Taxonomy
 from sematch.semantic.similarity import ConceptSimilarity
+from gensim.models import Word2Vec
+from scipy.spatial.distance import cosine
+import fasttext
+from breame.spelling import british_spelling_exists, get_american_spelling
+import fasttext.util
+
+
 
 api = datamuse.Datamuse()
-rep_antonym = word_antonym_replacer()
 
-def removeStopwords(sentence):
-    stopwords = list(set(nltk.corpus.stopwords.words('english')))
-    stopwords.extend(['could', 'would']) #for some reason not included
-    stopwords.remove('not') #leave not for antonyms
-    x = sentence.split()
-    filtered_sentence = [w for w in x if w.isalpha() and w not in stopwords]
-    #with no lower case conversion
-    return filtered_sentence
+#example word2vector model using brown corpus
 
-def preprocess(sentence):
-    #gets rid of relevant special chars 
-    sentence = str(sentence).lower().replace('!', '').replace('?', '').replace('.', '').replace(',', '')
-    sentence = contractions.fix(sentence)
-    sentence = removeStopwords(sentence)
-    sentence = rep_antonym.replace_negations(sentence)
-    if 'not' in sentence:
-        sentence.remove('not')
-    return sentence
-
-
-def task8(method):
-    #method on string joka valitsee millä tavalla similarity otetaan
-
-    #loopissa rivetiiäin lausetia läpi
+def task5():
     df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
     df["sim"] = float (0)
-
-    concept = ConceptSimilarity(Taxonomy(DBpediaDataTransform()),'models/dbpedia_type_ic.txt')
 
     for i,row in df.iterrows():
         row = row.copy()
         s1 = row["S1"]
         s2 = row["S2"]
-        s1_tokens = preprocess(s1)
-        s2_tokens = preprocess(s2)
+        s1_tokens = preprocessing.preprocess(s1)
+        s2_tokens = preprocessing.preprocess(s2)
         
-        concepts1 = []
+        s1_sets = []
+        s2_sets = []
         for token in s1_tokens:
-            concepts1.append(concept.name2concept(token))
-        similarities1 = []
+            #get set of words with best method
+            #append the s1_sets list
+            continue
+        #get intersection of all sets in s1_sets and add those to s1_tokens
 
-        concepts2 = []
         for token in s2_tokens:
-            concepts2.append(concept.name2concept(token))
-        similarities2 = []
+            #get set of words with best method
+            #append the s2_sets list
+            continue
+        #get intersection of all sets in s2_sets and add those to s2_tokens
         
-        for c1 in concepts1:
-            max = 0
-            for c2 in concepts2:
-                sim = concept.similarity(c1, c2, method)
-                if sim > max:
-                    max =  sim
-            similarities1.append(max)
-        sim1 = similarities1.mean()
+        #jaccardsim the tokens
+        #df.loc[i,"sim"] = jaccardsim
+    fname = 'results/Dmuse_ssts.csv'
+    df.to_csv(fname, index=False, header=True)
 
-        for c2 in concepts2:
-            max = 0
-            for c1 in concepts1:
-                sim = concept.similarity(c2, c1, method)
-                if sim > max:
-                    max =  sim
-            similarities2.append(max)
-        sim2 = similarities2.mean()
-        sim = float((sim1+sim2)/2)
-        df.loc[i,"sim"] = sim
-        dataAnalysis.getPearsons(df["human_sim"], df["sim"])
+    print('Correlation: ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
+
+def get_ft_sim(s1, s2, ftmodel):
+    vec_s1 = np.mean([ftmodel[x] for x in s1.split()], axis=0)
+    vec_s2 = np.mean([ftmodel[x] for x in s2.split()], axis=0)
+
+    cos_sim = 1 - cosine(vec_s1,vec_s2)
+    return cos_sim
+
+def get_glove_sim(s1, s2, model):
+    vec_s1 = np.mean([np.array(model[x]) for x in s1.split()], axis=0)
+    vec_s2 = np.mean([np.array(model[x]) for x in s2.split()], axis=0)
+    
+    cos_sim = 1 - cosine(vec_s1,vec_s2)
+    return cos_sim
+
+def get_w2v_sim(s1, s2, model):
+
+    #vec_s1 = np.mean([model.get_vector(x) for x in s1.split()], axis=0)
+    v1 = []
+    for w in s1.split():
+        try:
+            v1.append(model.get_vector(w))
+        except KeyError:
+            if british_spelling_exists(w):
+                v1.append(model.get_vector(get_american_spelling(w)))
+    vec_s1 = np.mean(v1, axis=0)
+
+    #vec_s2 = np.mean([model.get_vector(x) for x in s2.split()], axis=0)
+    v2 = []
+    for w in s2.split():
+        try:
+            v2.append(model.get_vector(w))
+        except KeyError:
+            if british_spelling_exists(w):
+                v2.append(model.get_vector(get_american_spelling(w)))
+    vec_s2 = np.mean(v2, axis=0)
+    cos_sim = 1 - cosine(vec_s1,vec_s2)
+    return cos_sim
+
+def gloveAnalysis():
+    #GloVe model
+    model = torchtext.vocab.GloVe(name='6B', dim=50)
+    df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
+    df["sim"] = float (0)
+    for i,row in df.iterrows():
+        row = row.copy()
+        s1 = row["S1"]
+        s2 = row["S2"]
+        s1 = preprocessing.preprocess2(s1)
+        s2 = preprocessing.preprocess2(s2)
+        df.loc[i,"sim"] = get_glove_sim(s1, s2, model)
+
+    fname = 'results/Glove_ssts.csv'
+    df.to_csv(fname, index=False, header=True)
+
+    print('Correlation for: ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
+
+def w2vAnalysis():
+    model = gensim.downloader.load('word2vec-google-news-300')
+    df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
+    df["sim"] = float (0)
+    for i,row in df.iterrows():
+        row = row.copy()
+        s1 = row["S1"]
+        s2 = row["S2"]
+        s1 = preprocessing.preprocess2(s1)
+        s2 = preprocessing.preprocess2(s2)
+        df.loc[i,"sim"] = get_w2v_sim(s1, s2, model)
+
+    fname = 'results/w2v_ssts.csv'
+    df.to_csv(fname, index=False, header=True)
+
+    print('Correlation for: ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
+
+def ftAnalysis():
+    fasttext.util.download_model('en', if_exists='ignore')
+    model = fasttext.load_model('cc.en.300.bin')
+    df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
+    df["sim"] = float (0)
+    for i,row in df.iterrows():
+        row = row.copy()
+        s1 = row["S1"]
+        s2 = row["S2"]
+        s1 = preprocessing.preprocess2(s1)
+        s2 = preprocessing.preprocess2(s2)
+        df.loc[i,"sim"] = get_ft_sim(s1, s2, model)
+
+    fname = 'results/ft_ssts.csv'
+    df.to_csv(fname, index=False, header=True)
+
+    print('Correlation for: ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
+
+
+def task8():
+    methods = ['path', 'wup','li'] #'lin','jcn', 'res','wpath' ends with certificate expired error
+    for method in methods:
+        df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
+        df["sim"] = float (0)
+
+        concept = ConceptSimilarity(Taxonomy(DBpediaDataTransform()),'models/dbpedia_type_ic.txt')
+
+        for i,row in df.iterrows():
+            row = row.copy()
+            s1 = row["S1"]
+            s2 = row["S2"]
+            s1_tokens = preprocessing.preprocess(s1)
+            s2_tokens = preprocessing.preprocess(s2)
+            
+            concepts1 = []
+            for token in s1_tokens:
+                concepts1.append(concept.name2concept(token))
+            similarities1 = []
+
+            concepts2 = []
+            for token in s2_tokens:
+                concepts2.append(concept.name2concept(token))
+            similarities2 = []
+
+            #comment these out to get results where tokens without concept get simimlarity 0
+            concepts1 = [c for c in concepts1 if not c == []]
+            concepts2 = [c for c in concepts2 if not c == []]
+
+            if not (concepts2 == [] or concepts1 == []):
+                for c1 in concepts1:
+                    max = 0
+                    if not c1 == []:
+                        for c2 in concepts2:
+                            if not c2 == []:
+                                sim = concept.similarity(c1, c2, method)
+                                if sim > max:
+                                    max =  sim
+                    similarities1.append(max)
+                sim1 = np.average(similarities1)
+
+                for c2 in concepts2:
+                    max = 0
+                    if not c2 == []:
+                        for c1 in concepts1:
+                            if not c1 == []:
+                                sim = concept.similarity(c2, c1, method)
+                                if sim > max:
+                                    max =  sim
+                    similarities2.append(max)
+                sim2 = np.average(similarities2)
+                sim = float((sim1+sim2)/2)
+                df.loc[i,"sim"] = sim
+        fname = 'results/DBpedia_' + method + '.csv'
+        df.to_csv(fname, index=False, header=True)
+
+        print('Correlation for ', method, ': ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
 
 def test5():
     df1 = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
@@ -92,13 +212,17 @@ def test5():
         row = row.copy()
         s1 = row["S1"]
         s2 = row["S2"]
-        s1 = preprocess(s1)
-        s2 = preprocess(s2)
+        s1 = preprocessing.preprocess(s1)
+        s2 = preprocessing.preprocess(s2)
         df.at[i,"S1_tokens"] = s1
         df.at[i,"S2_tokens"] = s2
-    df.to_csv('preprocess_test.csv', index=False, sep=';')
+    df.to_csv('preprocess_test2.csv', index=False, sep=';')
+
 def testing():
-    print(rep_antonym.replace('like'))
+    #gloveAnalysis(glove)
+    w2vAnalysis()
+    #ftAnalysis(ft_en_model)
+    pass
 
 if __name__ == "__main__":
-    test5()
+    testing()

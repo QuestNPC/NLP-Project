@@ -63,7 +63,6 @@ w2v_model = Word2Vec(brown.sents())
 glove = torchtext.vocab.GloVe(name='6B', dim=50)
 
 def get_glove_sim(s1, s2, model):
-    #not having words in lowercase and stemmed, fucks with the vectors resulting some to be 0s, but it is what was instructed...
     vec_s1 = np.mean([np.array(model[x]) for x in s1.split()], axis=0)
     vec_s2 = np.mean([np.array(model[x]) for x in s2.split()], axis=0)
     
