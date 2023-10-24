@@ -99,7 +99,7 @@ def preprocess2(sentence):
     
     sentence = str(sentence).lower()
     sentence = contractions.fix(sentence)
-    sentence = re.sub("[^A-Za-z0-9]+", '', sentence)
+    sentence = re.sub("[^A-Za-z0-9]+ ", '', sentence)
     return sentence
 
 if __name__ == "__main__":

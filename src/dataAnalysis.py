@@ -15,10 +15,14 @@ def dm_to_df(datamuse_response):
         [{'word': 'foo', 'score': 100}, {'word': 'bar', 'score': 120}]
     """
     reformatted = {
-        'word': [response['word'] for response in datamuse_response],
-        'score': [response['score'] for response in datamuse_response]
+        'word': [response['word'] for response in datamuse_response]
     }
     return pd.DataFrame.from_dict(reformatted)
+
+def maxAPIcallset(word):
+    response = api.words(ml=word,max=1000)
+    return set(dm_to_df(response)['word'])
+
 
 def getSimilar(word, arg, count):
     #select api call based on argument
@@ -30,6 +34,8 @@ def getSimilar(word, arg, count):
         response = api.words(ml=word,max=count)
     if arg == 'rel_trg':
         response = api.words(rel_trg=word,max=count)
+    if arg == 'rel_spc':
+        response = api.words(rel_spc=word,max=count)
     #make response into a set to return
     return set(dm_to_df(response)['word'])
 
@@ -67,36 +73,30 @@ def runFileApiCall(file, call, n):
     return getPearsons(df["human_sim"], df["sim"])
 
 def test():
-    #tätä voi kutsua testaan eri API calleja    
-    result = runFileApiCall('datasets/mc.csv', 'rel_trg',500)
-    print(result)
+    #tätä voi kutsua testaan eri API calleja
+    i = 0
+    while i < 5:
+        result = runFileApiCall('datasets/mc.csv', 'ml', 570)
+        print(result, 'max=', 570)
+        i += 1
 
-def test2():    
-    df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
-    df["sim"] = float (0)
-    for i,row in df.iterrows():
-        row = row.copy()
-        s1 = row["S1"]
-        s2 = row["S2"]
-        s1_sets = []
-        s2_sets = []
-        for token in s1_tokens:
-            #get set of words with best method
-            #append the s1_sets list
-            continue
-        #get intersection of all sets in s1_sets and add those to s1_tokens
-
-        for token in s2_tokens:
-            #get set of words with best method
-            #append the s2_sets list
-            continue
-        #get intersection of all sets in s2_sets and add those to s2_tokens
-        
-        #jaccardsim the tokens
-        #df.loc[i,"sim"] = jaccardsim
-        continue
-    
-    getPearsons(df["human_sim"], df["sim"])
+def testBest():
+    call = 'ml'
+    max = 570
+    data_sets = ['rg','wordsim']
+    path = "datasets"
+    wd = os.getcwd()
+    path = os.path.join(wd, path)
+    all_files = []
+    for root,dirs,files in os.walk(path):
+        for file in files:
+            if file.endswith(".csv") and any(ele in file for ele in data_sets):
+                relative_path = os.path.relpath(os.path.join(file, root))
+                relative_path = os.path.join(relative_path, file)
+                all_files.append(relative_path)
+    for file in all_files:
+        result = runFileApiCall(file, call, max)
+        print('Result for', file, ':',result)
 
 def getSimEvalCorr():
     data_sets = ['rg','mc','wordsim']
@@ -116,4 +116,4 @@ def getSimEvalCorr():
 
 
 if __name__ == "__main__":
-    test()
+    testBest()

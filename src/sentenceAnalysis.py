@@ -15,11 +15,15 @@ import fasttext
 from breame.spelling import british_spelling_exists, get_american_spelling
 import fasttext.util
 from sematch.semantic.similarity import YagoTypeSimilarity
-
-
-api = datamuse.Datamuse()
-
 #example word2vector model using brown corpus
+
+def setintersection(set_list):
+    isect = set_list[0].intersection(set_list[1])
+    i = 2
+    while i < len(set_list):
+        isect = isect.intersection(set_list[i])
+        i += 1
+    return isect
 
 def task5():
     df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
@@ -35,19 +39,20 @@ def task5():
         s1_sets = []
         s2_sets = []
         for token in s1_tokens:
-            #get set of words with best method
-            #append the s1_sets list
-            continue
-        #get intersection of all sets in s1_sets and add those to s1_tokens
+            w_set = dataAnalysis.maxAPIcallset(token)
+            s1_sets.append(w_set)
+        s1_isect = setintersection(s1_sets)
 
         for token in s2_tokens:
-            #get set of words with best method
-            #append the s2_sets list
+            w_set = dataAnalysis.maxAPIcallset(token)
+            s2_sets.append(w_set)
             continue
-        #get intersection of all sets in s2_sets and add those to s2_tokens
-        
+        s2_isect = setintersection(s2_sets)
+
+        s1_tokens.extend(list(s1_isect))
+        s2_tokens.extend(list(s2_isect))
         #jaccardsim the tokens
-        #df.loc[i,"sim"] = jaccardsim
+        df.loc[i,"sim"] = dataAnalysis.jaccardSim(set(s2_tokens),set(s1_tokens))
     fname = 'results/Dmuse_ssts.csv'
     df.to_csv(fname, index=False, header=True)
 
@@ -176,25 +181,11 @@ def BDpedia(exclude):
 
             if not (concepts2 == [] or concepts1 == []):
                 for c1 in concepts1:
-                    max = 0
-                    if not c1 == []:
-                        for c2 in concepts2:
-                            if not c2 == []:
-                                sim = concept.similarity(c1, c2, method)
-                                if sim > max:
-                                    max =  sim
-                    similarities1.append(max)
+                    similarities1.append(findMax(method, concept, concepts2, c1))
                 sim1 = np.average(similarities1)
 
                 for c2 in concepts2:
-                    max = 0
-                    if not c2 == []:
-                        for c1 in concepts1:
-                            if not c1 == []:
-                                sim = concept.similarity(c2, c1, method)
-                                if sim > max:
-                                    max =  sim
-                    similarities2.append(max)
+                    similarities2.append(findMax(method, concept, concepts1, c2))
                 sim2 = np.average(similarities2)
                 sim = float((sim1+sim2)/2)
                 df.loc[i,"sim"] = sim
@@ -205,6 +196,17 @@ def BDpedia(exclude):
         df.to_csv(fname, index=False, header=True)
 
         print('Correlation for ', method, ': ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
+
+def findMax(method, concept, concepts2, c1):
+    if c1 == []:
+        return 0
+    max = 0
+    for c2 in concepts2:
+        if not c2 == []:
+            sim = concept.similarity(c1, c2, method)
+            if sim > max:
+                max =  sim
+    return max
 
 def yago(exclude):
     yago_sim = YagoTypeSimilarity()
@@ -237,6 +239,7 @@ def yago(exclude):
                 concepts2 = [c for c in concepts2 if not c == []]
 
             if not (concepts2 == [] or concepts1 == []): #just making sure no issues happen if sentences get no matches
+                
                 #stupid tree #1
                 for c1 in concepts1:
                     max = 0
@@ -276,11 +279,12 @@ def yago(exclude):
         print('Correlation for ', method, ': ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
 
 def testing():
-    #gloveAnalysis(glove)
+    gloveAnalysis()
     w2vAnalysis()
-    #ftAnalysis(ft_en_model)
-    pass
+    ftAnalysis()
+
 
 if __name__ == "__main__":
-    BDpedia(True)
-    BDpedia(False)
+    #BDpedia(True)
+    #BDpedia(False)
+    testing()

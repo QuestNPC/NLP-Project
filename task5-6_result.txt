@@ -1,0 +1,11 @@
+call ml max 1000
+Correlation:  0.6170915960731571
+
+glove
+Correlation for:  0.5976413037100394
+
+w2v
+Correlation for:  0.6823045309835535
+
+ft
+Correlation for:  0.5603935882400769
