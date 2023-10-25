@@ -2,10 +2,13 @@ call ml max 1000
 Correlation:  0.6170915960731571
 
 glove
-Correlation for:  0.5976413037100394
+Correlation for:  0.6326528121464929 contractions
+Correlation for:  0.6293727228504716 no contraction
 
 w2v
-Correlation for:  0.6823045309835535
+Correlation for:  0.7635315814421497 contractions
+Correlation for:  0.7551683967017027 no contraction
 
 ft
-Correlation for:  0.5603935882400769
+Correlation for:  0.5603349872071318 contractions
+Correlation for:  0.5429758119414146 no contraction

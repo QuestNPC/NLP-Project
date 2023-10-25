@@ -4,7 +4,7 @@ import nltk
 from nltk.corpus import wordnet
 from antonyms import word_antonym_replacer
 from nltk.stem import WordNetLemmatizer
- 
+
 lemmatizer = WordNetLemmatizer()
 rep_antonym = word_antonym_replacer()
 
@@ -94,13 +94,15 @@ def preprocess(sentence):
     sentence = [lemmatizer.lemmatize(w) for w in sentence]
     return sentence
 
-def preprocess2(sentence):
+def preprocess2(sentence, cont=True):
     #very minimal preprocessing for fasttext, GloVe and word2vercor
     
     sentence = str(sentence).lower()
-    sentence = contractions.fix(sentence)
-    sentence = re.sub("[^A-Za-z0-9]+ ", '', sentence)
+    sentence = sentence.replace('’', "'")
+    if not cont:
+        sentence = contractions.fix(sentence)
+        sentence = re.sub("[^A-Za-z0-9' ]+", '', sentence)
+    else:
+        sentence = re.sub("[^A-Za-z0-9' ]+", '', sentence)
     return sentence
 
-if __name__ == "__main__":
-    print(preprocess('The ghost of Queen Victoria appears to me every night, I don’t know why, I don’t even like the royals.'))

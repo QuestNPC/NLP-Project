@@ -96,7 +96,7 @@ def get_w2v_sim(s1, s2, model):
     cos_sim = 1 - cosine(vec_s1,vec_s2)
     return cos_sim
 
-def gloveAnalysis():
+def gloveAnalysis(contractions=True):
     #GloVe model
     model = torchtext.vocab.GloVe(name='6B', dim=50)
     df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
@@ -105,16 +105,19 @@ def gloveAnalysis():
         row = row.copy()
         s1 = row["S1"]
         s2 = row["S2"]
-        s1 = preprocessing.preprocess2(s1)
-        s2 = preprocessing.preprocess2(s2)
+        s1 = preprocessing.preprocess2(s1, contractions)
+        s2 = preprocessing.preprocess2(s2, contractions)
         df.loc[i,"sim"] = get_glove_sim(s1, s2, model)
 
-    fname = 'results/Glove_ssts.csv'
+    if contractions:
+        fname = 'results/Glove_contractions_ssts.csv'
+    else:
+        fname = 'results/Glove_ssts.csv'
     df.to_csv(fname, index=False, header=True)
 
     print('Correlation for: ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
 
-def w2vAnalysis():
+def w2vAnalysis(contractions=True):
     model = gensim.downloader.load('word2vec-google-news-300')
     df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
     df["sim"] = float (0)
@@ -122,16 +125,18 @@ def w2vAnalysis():
         row = row.copy()
         s1 = row["S1"]
         s2 = row["S2"]
-        s1 = preprocessing.preprocess2(s1)
-        s2 = preprocessing.preprocess2(s2)
+        s1 = preprocessing.preprocess2(s1, contractions)
+        s2 = preprocessing.preprocess2(s2, contractions)
         df.loc[i,"sim"] = get_w2v_sim(s1, s2, model)
-
-    fname = 'results/w2v_ssts.csv'
+    if contractions:
+        fname = 'results/w2v_contractions_ssts.csv'
+    else:
+        fname = 'results/w2v_ssts.csv'
     df.to_csv(fname, index=False, header=True)
-
     print('Correlation for: ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
 
-def ftAnalysis():
+def ftAnalysis(contractions=True):
+    #contractions is either True of False
     fasttext.util.download_model('en', if_exists='ignore')
     model = fasttext.load_model('cc.en.300.bin')
     df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
@@ -140,17 +145,20 @@ def ftAnalysis():
         row = row.copy()
         s1 = row["S1"]
         s2 = row["S2"]
-        s1 = preprocessing.preprocess2(s1)
-        s2 = preprocessing.preprocess2(s2)
+        s1 = preprocessing.preprocess2(s1,contractions)
+        s2 = preprocessing.preprocess2(s2,contractions)
         df.loc[i,"sim"] = get_ft_sim(s1, s2, model)
 
-    fname = 'results/ft_ssts.csv'
+    if contractions:
+        fname = 'results/ft_contractions_ssts.csv'
+    else:
+        fname = 'results/ft_ssts.csv'
     df.to_csv(fname, index=False, header=True)
 
     print('Correlation for: ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
 
 
-def BDpedia(exclude):
+def BDpedia(exclude=False):
     methods = ['path', 'wup','li'] #'lin','jcn', 'res','wpath' ends with certificate expired error
     for method in methods:
         df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
@@ -181,11 +189,11 @@ def BDpedia(exclude):
 
             if not (concepts2 == [] or concepts1 == []):
                 for c1 in concepts1:
-                    similarities1.append(findMax(method, concept, concepts2, c1))
+                    similarities1.append(bdMax(method, concept, concepts2, c1))
                 sim1 = np.average(similarities1)
 
                 for c2 in concepts2:
-                    similarities2.append(findMax(method, concept, concepts1, c2))
+                    similarities2.append(bdMax(method, concept, concepts1, c2))
                 sim2 = np.average(similarities2)
                 sim = float((sim1+sim2)/2)
                 df.loc[i,"sim"] = sim
@@ -197,7 +205,7 @@ def BDpedia(exclude):
 
         print('Correlation for ', method, ': ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
 
-def findMax(method, concept, concepts2, c1):
+def bdMax(method, concept, concepts2, c1):
     if c1 == []:
         return 0
     max = 0
@@ -208,7 +216,7 @@ def findMax(method, concept, concepts2, c1):
                 max =  sim
     return max
 
-def yago(exclude):
+def yago(exclude=False):
     yago_sim = YagoTypeSimilarity()
     methods = ['path', 'wup','li'] #'lin','jcn', 'res','wpath' ends with certificate expired error
     for method in methods:
@@ -242,30 +250,12 @@ def yago(exclude):
                 
                 #stupid tree #1
                 for c1 in concepts1:
-                    max = 0
-                    if not c1 == []:
-                        for c_1 in c1:
-                            for c2 in concepts2:
-                                if not c2 == []:
-                                    for c_2 in c2:
-                                        sim = yago_sim.yago_similarity(c_1, c_2, method)
-                                        if sim > max:
-                                            max =  sim
-                    similarities1.append(max)
+                    similarities1.append(yagomax(yago_sim, method, concepts2, c1))
                 sim1 = np.average(similarities1)
 
                 #stupid tree #2
                 for c2 in concepts2:
-                    max = 0
-                    if not c2 == []:
-                        for c_2 in c2:
-                            for c1 in concepts1:
-                                if not c1 == []:
-                                    for c_1 in c1:
-                                        sim = yago_sim.yago_similarity(c_2, c_1, method)
-                                        if sim > max:
-                                            max =  sim
-                    similarities2.append(max)
+                    similarities2.append(yagomax(yago_sim, method, concepts1, c2))
                 sim2 = np.average(similarities2)
 
                 sim = float((sim1+sim2)/2)
@@ -278,13 +268,31 @@ def yago(exclude):
 
         print('Correlation for ', method, ': ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
 
+def yagomax(yagoo, method, concept_list, conc):
+    if conc == []:
+        return 0
+    max = 0
+    for c_1 in conc:
+        for c2 in concept_list:
+            if not c2 == []:
+                for c_2 in c2:
+                    sim = yagoo.yago_similarity(c_1, c_2, method)
+                    if sim > max:
+                        max =  sim
+    return max
+
 def testing():
-    gloveAnalysis()
-    w2vAnalysis()
-    ftAnalysis()
+    gloveAnalysis(True)
+    gloveAnalysis(False)
+    w2vAnalysis(True)
+    w2vAnalysis(False)
+    ftAnalysis(True)
+    ftAnalysis(False)
 
 
 if __name__ == "__main__":
     #BDpedia(True)
     #BDpedia(False)
     testing()
+    #yago(True)
+    #yago(False)

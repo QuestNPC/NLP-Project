@@ -1,6 +1,6 @@
 from nltk.corpus import wordnet
-from nltk.stem import WordNetLemmatizer
-lemmatizer = WordNetLemmatizer()
+
+#adapted from tutorialspoint template: https://www.tutorialspoint.com/natural_language_toolkit/natural_language_toolkit_synonym_antonym_replacement.htm
 
 class word_antonym_replacer(object):
     def replace(self, word):
@@ -15,13 +15,10 @@ class word_antonym_replacer(object):
                         ants[antonym.name()] += antonym.count()
                     except KeyError:
                         ants[antonym.name()] = antonym.count()
-        '''
-        if len(antonyms) > 0:
-            return antonyms.pop()
-        '''
-        #most common antonym
+        
+        #most common antonym as lemma
         if len(ants) > 0:
-            return lemmatizer.lemmatize(max(zip(ants.values(), ants.keys()))[1])
+            return max(zip(ants.values(), ants.keys()))[1]
         else:
             return None
       
@@ -39,7 +36,3 @@ class word_antonym_replacer(object):
             words.append(word)
             i += 1
         return words
-    
-if __name__ == "__main__":
-    rep_antonym = word_antonym_replacer()
-    print(rep_antonym.replace('difference'))
