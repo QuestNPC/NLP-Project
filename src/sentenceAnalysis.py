@@ -12,7 +12,6 @@ from sematch.semantic.similarity import ConceptSimilarity
 from gensim.models import Word2Vec
 from scipy.spatial.distance import cosine
 import fasttext
-from breame.spelling import british_spelling_exists, get_american_spelling
 import fasttext.util
 from sematch.semantic.similarity import YagoTypeSimilarity
 #example word2vector model using brown corpus
@@ -25,9 +24,11 @@ def setintersection(set_list):
         i += 1
     return isect
 
-def task5():
+def task5(jaccard=False):
     df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
     df["sim"] = float (0)
+    if jaccard:
+        df["jaccard_sim"] = float(0)
 
     for i,row in df.iterrows():
         row = row.copy()
@@ -36,13 +37,16 @@ def task5():
         s1_tokens = preprocessing.preprocess(s1)
         s2_tokens = preprocessing.preprocess(s2)
         
+        if jaccard:
+            df.loc[i,"jaccard_sim"] = dataAnalysis.jaccardSim(set(s2_tokens),set(s1_tokens))
+
         s1_sets = []
-        s2_sets = []
         for token in s1_tokens:
             w_set = dataAnalysis.maxAPIcallset(token)
             s1_sets.append(w_set)
         s1_isect = setintersection(s1_sets)
 
+        s2_sets = []
         for token in s2_tokens:
             w_set = dataAnalysis.maxAPIcallset(token)
             s2_sets.append(w_set)
@@ -51,12 +55,15 @@ def task5():
 
         s1_tokens.extend(list(s1_isect))
         s2_tokens.extend(list(s2_isect))
+
         #jaccardsim the tokens
         df.loc[i,"sim"] = dataAnalysis.jaccardSim(set(s2_tokens),set(s1_tokens))
     fname = 'results/Dmuse_ssts.csv'
     df.to_csv(fname, index=False, header=True)
-
-    print('Correlation: ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
+    
+    if jaccard:
+        print('Correlation: ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
+    print('Correlation no datamuse: ', dataAnalysis.getPearsons(df["human_sim"], df["jaccard_sim"]))
 
 def get_ft_sim(s1, s2, ftmodel):
     vec_s1 = np.mean([ftmodel[x] for x in s1.split()], axis=0)
@@ -80,8 +87,7 @@ def get_w2v_sim(s1, s2, model):
         try:
             v1.append(model.get_vector(w))
         except KeyError:
-            if british_spelling_exists(w):
-                v1.append(model.get_vector(get_american_spelling(w)))
+            v1.append(np.zeros(300))
     vec_s1 = np.mean(v1, axis=0)
 
     #vec_s2 = np.mean([model.get_vector(x) for x in s2.split()], axis=0)
@@ -90,23 +96,22 @@ def get_w2v_sim(s1, s2, model):
         try:
             v2.append(model.get_vector(w))
         except KeyError:
-            if british_spelling_exists(w):
-                v2.append(model.get_vector(get_american_spelling(w)))
+            v2.append(np.zeros(300))
     vec_s2 = np.mean(v2, axis=0)
     cos_sim = 1 - cosine(vec_s1,vec_s2)
     return cos_sim
 
 def gloveAnalysis(contractions=True):
     #GloVe model
-    model = torchtext.vocab.GloVe(name='6B', dim=50)
+    model = torchtext.vocab.GloVe(name='6B', dim=300)
     df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
     df["sim"] = float (0)
     for i,row in df.iterrows():
         row = row.copy()
         s1 = row["S1"]
         s2 = row["S2"]
-        s1 = preprocessing.preprocess2(s1, contractions)
-        s2 = preprocessing.preprocess2(s2, contractions)
+        s1 = preprocessing.preprocessAmerican(s1, contractions)
+        s2 = preprocessing.preprocessAmerican(s2, contractions)
         df.loc[i,"sim"] = get_glove_sim(s1, s2, model)
 
     if contractions:
@@ -125,8 +130,8 @@ def w2vAnalysis(contractions=True):
         row = row.copy()
         s1 = row["S1"]
         s2 = row["S2"]
-        s1 = preprocessing.preprocess2(s1, contractions)
-        s2 = preprocessing.preprocess2(s2, contractions)
+        s1 = preprocessing.preprocessAmerican(s1, contractions)
+        s2 = preprocessing.preprocessAmerican(s2, contractions)
         df.loc[i,"sim"] = get_w2v_sim(s1, s2, model)
     if contractions:
         fname = 'results/w2v_contractions_ssts.csv'
@@ -145,8 +150,8 @@ def ftAnalysis(contractions=True):
         row = row.copy()
         s1 = row["S1"]
         s2 = row["S2"]
-        s1 = preprocessing.preprocess2(s1,contractions)
-        s2 = preprocessing.preprocess2(s2,contractions)
+        s1 = preprocessing.preprocessAmerican(s1,contractions)
+        s2 = preprocessing.preprocessAmerican(s2,contractions)
         df.loc[i,"sim"] = get_ft_sim(s1, s2, model)
 
     if contractions:
@@ -284,15 +289,16 @@ def yagomax(yagoo, method, concept_list, conc):
 def testing():
     gloveAnalysis(True)
     gloveAnalysis(False)
-    w2vAnalysis(True)
+    w2vAnalysis()
     w2vAnalysis(False)
     ftAnalysis(True)
     ftAnalysis(False)
 
 
 if __name__ == "__main__":
+    #task5(True)
+    testing()
     #BDpedia(True)
     #BDpedia(False)
-    testing()
     #yago(True)
     #yago(False)

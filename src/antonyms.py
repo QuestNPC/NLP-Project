@@ -27,7 +27,7 @@ class word_antonym_replacer(object):
         words = []
         while i < l:
             word = sent[i]
-            if (word == 'not' or word == 'no') and i+1 < l:
+            if word == 'not' and i+1 < l:
                 ant = self.replace(sent[i+1])
                 if ant:
                     words.append(ant)

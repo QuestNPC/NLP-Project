@@ -10,19 +10,15 @@ Correlation for  path :  0.3228125542413516
 Correlation for  wup :  0.32154130577171774
 Correlation for  li :  0.3246721520607868
 
-without lemmatization
-Correlation for  path :  0.3304775250425785
-Correlation for  wup :  0.33033620344521364
-Correlation for  li :  0.33065139014624495
 
 
 YAGO:
-lemmatization, non matches excluded
-Correlation for  path :  0.7008950572019647
-Correlation for  wup :  0.568236480570865
-Correlation for  li :  0.646562237434859
+non matches excluded
+Correlation for  path :  0.6950885038046589
+Correlation for  wup :  0.5602435526593468
+Correlation for  li :  0.6399610709217071
 
-lemmatization, non matches included
-Correlation for  path :  0.6466412147244027
-Correlation for  wup :  0.4805325175002798
-Correlation for  li :  0.6004241648288253
+non matches included
+Correlation for  path :  0.6412743838669754
+Correlation for  wup :  0.4759611599235184
+Correlation for  li :  0.5950232542075217

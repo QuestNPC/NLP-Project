@@ -1,11 +1,7 @@
 from datamuse import datamuse
 import pandas as pd
-import numpy as np
 from scipy.stats import pearsonr
 import os
-
-from sematch.semantic.graph import DBpediaDataTransform, Taxonomy
-from sematch.semantic.similarity import ConceptSimilarity
 
 api = datamuse.Datamuse()
 
@@ -72,13 +68,6 @@ def runFileApiCall(file, call, n):
         df.loc[i,"sim"] = dmPairSim(w1,w2,call,n)
     return getPearsons(df["human_sim"], df["sim"])
 
-def test():
-    #tätä voi kutsua testaan eri API calleja
-    i = 0
-    while i < 5:
-        result = runFileApiCall('datasets/mc.csv', 'ml', 570)
-        print(result, 'max=', 570)
-        i += 1
 
 def testBest():
     call = 'ml'

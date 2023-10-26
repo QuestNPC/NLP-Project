@@ -1,14 +1,26 @@
 call ml max 1000
 Correlation:  0.6170915960731571
+Correlation no datamuse:  0.6406529476938154
 
 glove
-Correlation for:  0.6326528121464929 contractions
-Correlation for:  0.6293727228504716 no contraction
+Correlation for:  0.7253846044925909 contractions
+Correlation for:  0.7085361632477112 no contraction
+
+american english
+Correlation for:  0.7260776447355899
+Correlation for:  0.709258352258859
 
 w2v
 Correlation for:  0.7635315814421497 contractions
 Correlation for:  0.7551683967017027 no contraction
 
+Correlation for:  0.7635316124777018 contractions (ignored as 0s)
+Correlation for:  0.7551684085740393 no contractions (ignored as 0s)
+
 ft
 Correlation for:  0.5603349872071318 contractions
 Correlation for:  0.5429758119414146 no contraction
+
+american english
+Correlation for:  0.5603457121484785
+Correlation for:  0.5430244263581349

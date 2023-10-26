@@ -4,6 +4,7 @@ import nltk
 from nltk.corpus import wordnet
 from antonyms import word_antonym_replacer
 from nltk.stem import WordNetLemmatizer
+from breame.spelling import british_spelling_exists, get_american_spelling
 
 lemmatizer = WordNetLemmatizer()
 rep_antonym = word_antonym_replacer()
@@ -71,7 +72,6 @@ def removeStopwords(sentence):
     stopwords = list(set(nltk.corpus.stopwords.words('english')))
     stopwords.extend(['could', 'would']) #for some reason not included
     stopwords.remove('not') #leave not for antonyms
-    stopwords.remove('no')
     x = sentence.split()
     filtered_sentence = [w for w in x if w.isalpha() and w not in stopwords]
     return filtered_sentence
@@ -79,18 +79,15 @@ def removeStopwords(sentence):
 
 def preprocess(sentence):
     #gets rid of relevant special chars 
-    sentence = str(sentence).lower().replace('no one', 'none')
+    sentence = str(sentence).lower().replace('no one', 'nobody')
     sentence = digittotext(sentence)
     sentence = re.sub("[^A-Za-z0-9' ]+", '', sentence)
     sentence = contractions.fix(sentence)
     sentence = sentence.replace('cannot', 'can not')
-    with_sw = sentence
     sentence = removeStopwords(sentence)
     sentence = rep_antonym.replace_negations(sentence)
     if 'not' in sentence:
         sentence.remove('not')
-    elif 'no' in sentence:
-        sentence.remove('no')
     sentence = [lemmatizer.lemmatize(w) for w in sentence]
     return sentence
 
@@ -104,5 +101,28 @@ def preprocess2(sentence, cont=True):
         sentence = re.sub("[^A-Za-z0-9' ]+", '', sentence)
     else:
         sentence = re.sub("[^A-Za-z0-9' ]+", '', sentence)
+    return sentence
+
+def preprocessAmerican(sentence, cont=True):
+    #very minimal preprocessing for fasttext, GloVe and word2vercor
+    
+    sentence = str(sentence).lower()
+    
+    if not cont:
+        sentence = contractions.fix(sentence)
+        sentence = sentence.replace('’', "'")
+        sentence = re.sub("[^A-Za-z0-9' ]+", '', sentence)
+    else:
+        sentence = sentence.replace('’', "'")
+        sentence = re.sub("[^A-Za-z0-9' ]+", '', sentence)
+    
+    sent = []
+    for w in sentence.split():
+        if british_spelling_exists(w):
+            sent.append(get_american_spelling(w))
+            continue
+        sent.append(w)
+
+    sentence = ' '.join(sent)
     return sentence
 
