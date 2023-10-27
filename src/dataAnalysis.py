@@ -15,8 +15,8 @@ def dm_to_df(datamuse_response):
     }
     return pd.DataFrame.from_dict(reformatted)
 
-def maxAPIcallset(word):
-    response = api.words(ml=word,max=1000)
+def bestAPIcallset(word, n):
+    response = api.words(ml=word,max=n)
     return set(dm_to_df(response)['word'])
 
 

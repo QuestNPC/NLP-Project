@@ -1,5 +1,4 @@
 PDpedia
-With lemmatization
 non match excluded
 Correlation for  path :  0.3360197942740645
 Correlation for  wup :  0.33601350519499706
@@ -14,11 +13,11 @@ Correlation for  li :  0.3246721520607868
 
 YAGO:
 non matches excluded
-Correlation for  path :  0.6950885038046589
-Correlation for  wup :  0.5602435526593468
-Correlation for  li :  0.6399610709217071
+Correlation for  path :  0.7013282257220647
+Correlation for  wup :  0.5656596747120637
+Correlation for  li :  0.6465282383056377
 
 non matches included
-Correlation for  path :  0.6412743838669754
-Correlation for  wup :  0.4759611599235184
-Correlation for  li :  0.5950232542075217
+Correlation for  path :  0.646991955596254
+Correlation for  wup :  0.47996221444010373
+Correlation for  li :  0.6007892323699879

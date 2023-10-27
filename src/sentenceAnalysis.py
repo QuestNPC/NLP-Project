@@ -1,69 +1,15 @@
-from datamuse import datamuse
 import pandas as pd
 import numpy as np
 import dataAnalysis
-from nltk.corpus import wordnet
 import preprocessing
-import torch
 import torchtext
 import gensim.downloader
 from sematch.semantic.graph import DBpediaDataTransform, Taxonomy
 from sematch.semantic.similarity import ConceptSimilarity
-from gensim.models import Word2Vec
 from scipy.spatial.distance import cosine
 import fasttext
 import fasttext.util
 from sematch.semantic.similarity import YagoTypeSimilarity
-#example word2vector model using brown corpus
-
-def setintersection(set_list):
-    isect = set_list[0].intersection(set_list[1])
-    i = 2
-    while i < len(set_list):
-        isect = isect.intersection(set_list[i])
-        i += 1
-    return isect
-
-def task5(jaccard=False):
-    df = pd.read_csv("datasets/ssts-131.csv",sep=';',names=['S1','S2','human_sim','std'])
-    df["sim"] = float (0)
-    if jaccard:
-        df["jaccard_sim"] = float(0)
-
-    for i,row in df.iterrows():
-        row = row.copy()
-        s1 = row["S1"]
-        s2 = row["S2"]
-        s1_tokens = preprocessing.preprocess(s1)
-        s2_tokens = preprocessing.preprocess(s2)
-        
-        if jaccard:
-            df.loc[i,"jaccard_sim"] = dataAnalysis.jaccardSim(set(s2_tokens),set(s1_tokens))
-
-        s1_sets = []
-        for token in s1_tokens:
-            w_set = dataAnalysis.maxAPIcallset(token)
-            s1_sets.append(w_set)
-        s1_isect = setintersection(s1_sets)
-
-        s2_sets = []
-        for token in s2_tokens:
-            w_set = dataAnalysis.maxAPIcallset(token)
-            s2_sets.append(w_set)
-            continue
-        s2_isect = setintersection(s2_sets)
-
-        s1_tokens.extend(list(s1_isect))
-        s2_tokens.extend(list(s2_isect))
-
-        #jaccardsim the tokens
-        df.loc[i,"sim"] = dataAnalysis.jaccardSim(set(s2_tokens),set(s1_tokens))
-    fname = 'results/Dmuse_ssts.csv'
-    df.to_csv(fname, index=False, header=True)
-    
-    if jaccard:
-        print('Correlation: ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
-    print('Correlation no datamuse: ', dataAnalysis.getPearsons(df["human_sim"], df["jaccard_sim"]))
 
 def get_ft_sim(s1, s2, ftmodel):
     vec_s1 = np.mean([ftmodel[x] for x in s1.split()], axis=0)
@@ -296,9 +242,8 @@ def testing():
 
 
 if __name__ == "__main__":
-    #task5(True)
-    testing()
+    #testing()
     #BDpedia(True)
     #BDpedia(False)
     #yago(True)
-    #yago(False)
+    yago(False)
