@@ -5,11 +5,14 @@ import preprocessing
 from nltk.util import bigrams, trigrams
 
 def setintersection(set_list):
+    if len(set_list) == 1:
+        return set_list[0]
     isect = set_list[0].intersection(set_list[1])
-    i = 2
-    while i < len(set_list):
-        isect = isect.intersection(set_list[i])
-        i += 1
+    if len(set_list) > 2:
+        i = 2
+        while i < len(set_list):
+            isect = isect.intersection(set_list[i])
+            i += 1
     return isect
 
 def task5(mode=0):
@@ -62,6 +65,24 @@ def task5(mode=0):
         elif mode == 13:
             #querries with tokens and extends tokens with union over all responses
             sim = mode13(s1, s2)
+        elif mode == 14:
+            #querries with single words from sentence, extends sentence token with union of response sets
+            sim = mode14(s1, s2)
+        elif mode == 15:
+            #querries with single words from sentence, extends sentence token with intersection of response sets
+            sim = mode15(s1, s2)
+        elif mode == 16:
+            #token bigrams used for querries, respose set intersection added to tokens
+            sim = mode16(s1, s2)
+        elif mode == 17:
+            #token trigrams used for querries, respose set intersection added to tokens
+            sim = mode17(s1, s2)
+        elif mode == 14:
+            #token bigrams used for querries, respose set union added to tokens
+            sim = mode18(s1, s2)
+        elif mode == 15:
+            #token trigrams used for querries, respose set union added to tokens
+            sim = mode19(s1, s2)
         else:
             #querries with tokens and extends tokens with intersection over all responses
             sim = tokensAll(s1, s2)
@@ -149,7 +170,7 @@ def trigramSetIntersection(set_list):
         additions = additions.union(isection)
     return additions
 
-def mode4(s1, s2, included):
+def mode4(s1, s2):
     sent1 = preprocessing.preprocess2(s1)
     sent2 = preprocessing.preprocess2(s2)
     s1_tokens = preprocessing.preprocess(s1)
@@ -173,15 +194,11 @@ def mode4(s1, s2, included):
     additions2 = set()
     for s in s2_sets:
         additions2 = additions2.union(s)
-    if included:
-        s1_tokens.extend(list(additions1))
-        s2_tokens.extend(list(additions2))
-    else:
-        s1_tokens = list(additions1)
-        s2_tokens = list(additions2)
+    s1_tokens.extend(list(additions1))
+    s2_tokens.extend(list(additions2))
     return dataAnalysis.jaccardSim(set(s1_tokens),set(s2_tokens))
 
-def mode5(s1, s2, included):
+def mode5(s1, s2):
     
     sent1 = preprocessing.preprocess2(s1)
     sent2 = preprocessing.preprocess2(s2)
@@ -205,13 +222,9 @@ def mode5(s1, s2, included):
         additions1 = additions1.union(s)
     additions2 = set()
     for s in s2_sets:
-        additions2 = additions2.union(s)
-    if included:
-        s1_tokens.extend(list(additions1))
-        s2_tokens.extend(list(additions2))
-    else:
-        s1_tokens = list(additions1)
-        s2_tokens = list(additions2)
+        additions2 = additions2.union(s)    
+    s1_tokens.extend(list(additions1))
+    s2_tokens.extend(list(additions2))
     return dataAnalysis.jaccardSim(set(s2_tokens),set(s1_tokens))
 
 def mode6(s1, s2):
@@ -401,5 +414,159 @@ def tokensAll(s1, s2):
     sim = dataAnalysis.jaccardSim(set(s2_tokens),set(s1_tokens))
     return sim
 
+def mode14(s1, s2):
+    sent1 = preprocessing.preprocess2(s1)
+    sent2 = preprocessing.preprocess2(s2)
+    s1_tokens = preprocessing.preprocess(s1)
+    s2_tokens = preprocessing.preprocess(s2)
+    s_1 = sent1.split()
+    s_2 = sent2.split()
+    
+    s1_sets = []
+    for w in s_1:
+        s1_sets.append(dataAnalysis.bestAPIcallset(w,1000))
+    
+    s2_sets = []
+    for w in s_2:
+        s2_sets.append(dataAnalysis.bestAPIcallset(w,1000)) 
+
+    additions1 = set()
+    for s in s1_sets:
+        additions1 = additions1.union(s)
+    additions2 = set()
+    for s in s2_sets:
+        additions2 = additions2.union(s)
+
+    s1_tokens.extend(list(additions1))
+    s2_tokens.extend(list(additions2))
+    return dataAnalysis.jaccardSim(set(s1_tokens),set(s2_tokens))
+
+def mode15(s1, s2):
+    sent1 = preprocessing.preprocess2(s1)
+    sent2 = preprocessing.preprocess2(s2)
+    s1_tokens = preprocessing.preprocess(s1)
+    s2_tokens = preprocessing.preprocess(s2)
+    s_1 = sent1.split()
+    s_2 = sent2.split()
+    
+    s1_sets = []
+    for w in s_1:
+        s1_sets.append(dataAnalysis.bestAPIcallset(w,1000))
+    
+    s2_sets = []
+    for w in s_2:
+        s2_sets.append(dataAnalysis.bestAPIcallset(w,1000)) 
+
+    s1_isect = setintersection(s1_sets)
+    s2_isect = setintersection(s2_sets)
+
+    s1_tokens.extend(list(s1_isect))
+    s2_tokens.extend(list(s2_isect))
+    return dataAnalysis.jaccardSim(set(s1_tokens),set(s2_tokens))
+
+def mode16(s1, s2):
+    s1_tokens = preprocessing.preprocess(s1)
+    s2_tokens = preprocessing.preprocess(s2)
+    token_bigrams1 = bigrams(s1_tokens)
+    token_bigrams2 = bigrams(s2_tokens)
+    s1_sets = []
+    for big in token_bigrams1:
+        w_set = dataAnalysis.bestAPIcallset(' '.join(big), 1000)
+        s1_sets.append(w_set)
+    s1_isect = setintersection(s1_sets)
+
+    s2_sets = []
+    for big in token_bigrams2:
+        w_set = dataAnalysis.bestAPIcallset(' '.join(big), 1000)
+        s2_sets.append(w_set)
+    s2_isect = setintersection(s2_sets)
+
+    s1_tokens.extend(list(s1_isect))
+    s2_tokens.extend(list(s2_isect))
+    sim = dataAnalysis.jaccardSim(set(s2_tokens),set(s1_tokens))
+    return sim
+
+def mode17(s1, s2):
+    s1_tokens = preprocessing.preprocess(s1)
+    s2_tokens = preprocessing.preprocess(s2)
+    token_trigrams1 = trigrams(s1_tokens)
+    token_trigrams2 = trigrams(s2_tokens)
+    s1_sets = []
+    
+    for tri in token_trigrams1:
+        w_set = dataAnalysis.bestAPIcallset(' '.join(tri), 1000)
+        s1_sets.append(w_set)
+    s1_isect = setintersection(s1_sets)
+
+    s2_sets = []
+    for tri in token_trigrams2:
+        w_set = dataAnalysis.bestAPIcallset(' '.join(tri), 1000)
+        s2_sets.append(w_set)
+    s2_isect = setintersection(s2_sets)
+
+    s1_tokens.extend(list(s1_isect))
+    s2_tokens.extend(list(s2_isect))
+    sim = dataAnalysis.jaccardSim(set(s2_tokens),set(s1_tokens))
+    return sim
+
+def mode18(s1, s2):
+    s1_tokens = preprocessing.preprocess(s1)
+    s2_tokens = preprocessing.preprocess(s2)
+    token_bigrams1 = bigrams(s1_tokens)
+    token_bigrams2 = bigrams(s2_tokens)
+    s1_sets = []
+    for big in token_bigrams1:
+        w_set = dataAnalysis.bestAPIcallset(' '.join(big), 1000)
+        s1_sets.append(w_set)
+
+    s2_sets = []
+    for big in token_bigrams2:
+        w_set = dataAnalysis.bestAPIcallset(' '.join(big), 1000)
+        s2_sets.append(w_set)
+
+    additions1 = set()
+    for s in s1_sets:
+        additions1 = additions1.union(s)
+    additions2 = set()
+    for s in s2_sets:
+        additions2 = additions2.union(s)
+
+    s1_tokens.extend(list(additions1))
+    s2_tokens.extend(list(additions2))
+    sim = dataAnalysis.jaccardSim(set(s2_tokens),set(s1_tokens))
+    return sim
+
+def mode19(s1, s2):
+    s1_tokens = preprocessing.preprocess(s1)
+    s2_tokens = preprocessing.preprocess(s2)
+    token_trigrams1 = trigrams(s1_tokens)
+    token_trigrams2 = trigrams(s2_tokens)
+    s1_sets = []
+    
+    for tri in token_trigrams1:
+        w_set = dataAnalysis.bestAPIcallset(' '.join(tri), 1000)
+        s1_sets.append(w_set)
+
+    s2_sets = []
+    for tri in token_trigrams2:
+        w_set = dataAnalysis.bestAPIcallset(' '.join(tri), 1000)
+        s2_sets.append(w_set)
+
+    additions1 = set()
+    for s in s1_sets:
+        additions1 = additions1.union(s)
+    additions2 = set()
+    for s in s2_sets:
+        additions2 = additions2.union(s)
+
+    s1_tokens.extend(list(additions1))
+    s2_tokens.extend(list(additions2))
+    sim = dataAnalysis.jaccardSim(set(s2_tokens),set(s1_tokens))
+    return sim
+
+
 if __name__ == "__main__":
-    task5(0)
+    i = 14
+    while i < 20:
+        task5(i)
+        i +=1

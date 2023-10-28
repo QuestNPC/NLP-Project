@@ -13,6 +13,7 @@ Correlation mode 10 (mode 5 without sentence tokens): 0.6567800792337892
 Correlation mode 11 (mode 6 without sentence tokens): 0.03880926837325151
 Correlation mode 12 (mode 7 without sentence tokens): 0.03880926837325152
 Correlation mode 13 (same as 0, but union instead of intersection): 0.7578634571217266
+Correlation mode 14 (single words from sentences for querries, union added to tokens): 0.2855756003137331
 
 glove
 Correlation for:  0.7253846044925909 contractions
