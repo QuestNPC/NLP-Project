@@ -3,17 +3,22 @@ Correlation mode 0 (tokens + intersection over all sets (single token pai calls)
 Correlation mode 1 (just tokens):  0.6406529476938154
 Correlation mode 2 (unions of intersections between token api call set bigrams):  0.49895151944149413
 Correlation mode 3 (unions of intersections between token api call set trigrams):  0.4999906191824718
-Correlation mode 4 (sentence bigram, union of response sets): 0.6839928279636704
-Correlation mode 5 (sentence trigram, union of response sets): 0.6569295294416746
-Correlation mode 6 (sentence bigram, intersection of response sets): 0.634247589658697
-Correlation mode 7 (sentence trigram, intersection of response sets): 0.6257364977065081
-Correlation mode 8 (full sentence api call): 0.5633383947747093
+Correlation mode 4 (sentence bigram, union of response sets to tokens): 0.6839928279636704
+Correlation mode 5 (sentence trigram, union of response sets to tokens): 0.6569295294416746
+Correlation mode 6 (sentence bigram, intersection of response sets to tokens): 0.634247589658697
+Correlation mode 7 (sentence trigram, intersection of response sets to tokens): 0.6257364977065081
+Correlation mode 8 (full sentence api call added to tokens): 0.5633383947747093
 Correlation mode 9 (mode 4 without sentence tokens): 0.6838645283897532
 Correlation mode 10 (mode 5 without sentence tokens): 0.6567800792337892
 Correlation mode 11 (mode 6 without sentence tokens): 0.03880926837325151
 Correlation mode 12 (mode 7 without sentence tokens): 0.03880926837325152
 Correlation mode 13 (same as 0, but union instead of intersection): 0.7578634571217266
-Correlation mode 14 (single words from sentences for querries, union added to tokens): 0.2855756003137331
+Correlation mode 14 (single words from sentences for querries, union added to tokens): 0.6648411669147278
+Correlation mode 15 (single words from sentences for querries, intersection added to tokens): 0.6406529476938154
+Correlation mode 16 (token bigrams, union of response sets to tokens): 0.5742082823112067
+Correlation mode 17 (token trigrams, union of response sets to tokens): 0.5608390244260855
+Correlation mode 18 (token bigrams, intersection of response sets to tokens): 0.6170915960731571
+Correlation mode 19 (token trigrams, intersection of response sets to tokens): 0.6170915960731571
 
 glove
 Correlation for:  0.7253846044925909 contractions
