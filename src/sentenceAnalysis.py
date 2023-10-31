@@ -123,31 +123,9 @@ def BDpedia(exclude=False):
             s2 = row["S2"]
             s1_tokens = preprocessing.preprocess(s1)
             s2_tokens = preprocessing.preprocess(s2)
-            
-            concepts1 = []
-            for token in s1_tokens:
-                concepts1.append(concept.name2concept(token))
-            similarities1 = []
 
-            concepts2 = []
-            for token in s2_tokens:
-                concepts2.append(concept.name2concept(token))
-            similarities2 = []
-
-            if exclude:
-                concepts1 = [c for c in concepts1 if not c == []]
-                concepts2 = [c for c in concepts2 if not c == []]
-
-            if not (concepts2 == [] or concepts1 == []):
-                for c1 in concepts1:
-                    similarities1.append(bdMax(method, concept, concepts2, c1))
-                sim1 = np.average(similarities1)
-
-                for c2 in concepts2:
-                    similarities2.append(bdMax(method, concept, concepts1, c2))
-                sim2 = np.average(similarities2)
-                sim = float((sim1+sim2)/2)
-                df.loc[i,"sim"] = sim
+            sim = bdpediaSim(exclude, method, concept, s1_tokens, s2_tokens)
+            df.loc[i,"sim"] = sim
         if exclude:
             fname = 'results/DBpedia_exlude_' + method + '.csv'
         else:
@@ -155,6 +133,33 @@ def BDpedia(exclude=False):
         df.to_csv(fname, index=False, header=True)
 
         print('Correlation for ', method, ': ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
+
+def bdpediaSim(s1_tokens, s2_tokens, concept, method = 'path', exclude = False):
+    sim = 0
+    concepts1 = []
+    for token in s1_tokens:
+        concepts1.append(concept.name2concept(token))
+    similarities1 = []
+
+    concepts2 = []
+    for token in s2_tokens:
+        concepts2.append(concept.name2concept(token))
+    similarities2 = []
+
+    if exclude:
+        concepts1 = [c for c in concepts1 if not c == []]
+        concepts2 = [c for c in concepts2 if not c == []]
+
+    if not (concepts2 == [] or concepts1 == []):
+        for c1 in concepts1:
+            similarities1.append(bdMax(method, concept, concepts2, c1))
+        sim1 = np.average(similarities1)
+
+        for c2 in concepts2:
+            similarities2.append(bdMax(method, concept, concepts1, c2))
+        sim2 = np.average(similarities2)
+        sim = float((sim1+sim2)/2)
+    return sim
 
 def bdMax(method, concept, concepts2, c1):
     if c1 == []:
@@ -180,37 +185,9 @@ def yago(exclude=False):
             s2 = row["S2"]
             s1_tokens = preprocessing.preprocess(s1)
             s2_tokens = preprocessing.preprocess(s2)
-            
-            concepts1 = []
-            for token in s1_tokens:
-                concepts1.append(yago_sim.word2yago(token))
-            similarities1 = []
 
-            concepts2 = []
-            for token in s2_tokens:
-                concepts2.append(yago_sim.word2yago(token))
-            similarities2 = []
-
-            #comment these out to get results where tokens without concept get simimlarity 0
-            
-            if exclude:
-                concepts1 = [c for c in concepts1 if not c == []]
-                concepts2 = [c for c in concepts2 if not c == []]
-
-            if not (concepts2 == [] or concepts1 == []): #just making sure no issues happen if sentences get no matches
-                
-                #stupid tree #1
-                for c1 in concepts1:
-                    similarities1.append(yagomax(yago_sim, method, concepts2, c1))
-                sim1 = np.average(similarities1)
-
-                #stupid tree #2
-                for c2 in concepts2:
-                    similarities2.append(yagomax(yago_sim, method, concepts1, c2))
-                sim2 = np.average(similarities2)
-
-                sim = float((sim1+sim2)/2)
-                df.loc[i,"sim"] = sim
+            sim = yagoSim(s1_tokens, s2_tokens, yago_sim, method, exclude)
+            df.loc[i,"sim"] = sim
         if exclude:
             fname = 'results/yago_exlude_' + method + '.csv'
         else:
@@ -218,6 +195,40 @@ def yago(exclude=False):
         df.to_csv(fname, index=False, header=True)
 
         print('Correlation for ', method, ': ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
+
+def yagoSim( t1, t2, yago_sim, method='path', exclude=False):
+
+    sim = 0
+            
+    concepts1 = []
+    for token in t1:
+        concepts1.append(yago_sim.word2yago(token))
+    similarities1 = []
+
+    concepts2 = []
+    for token in t2:
+        concepts2.append(yago_sim.word2yago(token))
+    similarities2 = []
+
+            #comment these out to get results where tokens without concept get simimlarity 0
+            
+    if exclude:
+        concepts1 = [c for c in concepts1 if not c == []]
+        concepts2 = [c for c in concepts2 if not c == []]
+
+    if not (concepts2 == [] or concepts1 == []): #just making sure no issues happen if sentences get no matches
+                #stupid tree #1
+        for c1 in concepts1:
+            similarities1.append(yagomax(yago_sim, method, concepts2, c1))
+        sim1 = np.average(similarities1)
+
+                #stupid tree #2
+        for c2 in concepts2:
+            similarities2.append(yagomax(yago_sim, method, concepts1, c2))
+        sim2 = np.average(similarities2)
+
+        sim = float((sim1+sim2)/2)
+    return sim
 
 def yagomax(yagoo, method, concept_list, conc):
     if conc == []:
