@@ -30,8 +30,8 @@ class UI:
                      print(self._algo_opt.get())
                      self._token1.set(str(preprocessing.preprocess(self._sentence_1.get())))
                      self._token2.set(str(preprocessing.preprocess(self._sentence_2.get())))
-                     self._preprocess1.set(str(preprocessing.preprocessAmerican(self._sentence_1.get())))
-                     self._preprocess2.set(str(preprocessing.preprocessAmerican(self._sentence_2.get())))
+                     self._preprocess1.set(str(preprocessing.preprocess2(self._sentence_1.get())))
+                     self._preprocess2.set(str(preprocessing.preprocess2(self._sentence_2.get())))
                      if self._algo_opt.get() == "fastText":
                             self._result.set(str(sentenceAnalysis.get_ft_sim(self._preprocess1.get(), self._preprocess2.get(), ftmodel)))
                      elif self._algo_opt.get() == "word2vec":
@@ -122,7 +122,7 @@ class UI:
               result_score = ttk.Label(master=self._root, textvariable=self._token2)
               result_score.grid(row=23, column=1, padx=5, pady=5)
               
-              # preprocess
+              # preprocesses
               self._preprocess1 = StringVar()
               self._preprocess1.set("")
               result_heading = ttk.Label(master=self._root, text="Limited preprocess 1:")
