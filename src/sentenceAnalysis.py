@@ -124,7 +124,7 @@ def BDpedia(exclude=False):
             s1_tokens = preprocessing.preprocess(s1)
             s2_tokens = preprocessing.preprocess(s2)
 
-            sim = bdpediaSim(exclude, method, concept, s1_tokens, s2_tokens)
+            sim = bdpediaSim(s1_tokens, s2_tokens, concept,  method, exclude)
             df.loc[i,"sim"] = sim
         if exclude:
             fname = 'results/DBpedia_exlude_' + method + '.csv'
@@ -134,7 +134,7 @@ def BDpedia(exclude=False):
 
         print('Correlation for ', method, ': ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
 
-def bdpediaSim(s1_tokens, s2_tokens, concept, method = 'path', exclude = False):
+def bdpediaSim(s1_tokens, s2_tokens, concept, method = 'path', exclude = True):
     sim = 0
     concepts1 = []
     for token in s1_tokens:
@@ -196,7 +196,7 @@ def yago(exclude=False):
 
         print('Correlation for ', method, ': ', dataAnalysis.getPearsons(df["human_sim"], df["sim"]))
 
-def yagoSim( t1, t2, yago_sim, method='path', exclude=False):
+def yagoSim( t1, t2, yago_sim, method='path', exclude=True):
 
     sim = 0
             
@@ -257,4 +257,6 @@ if __name__ == "__main__":
     #BDpedia(True)
     #BDpedia(False)
     #yago(True)
-    yago(False)
+    #yago(False)
+    concept = ConceptSimilarity(Taxonomy(DBpediaDataTransform()),'models/dbpedia_type_ic.txt')
+    print(bdpediaSim(['actor', 'film'], ['actor','train'], concept))

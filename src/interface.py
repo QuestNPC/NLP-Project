@@ -43,9 +43,9 @@ class UI:
                      elif self._algo_opt.get() == "Best":
                             self._result.set(str(datamuseSentence.mode13(self._sentence_1.get(), self._sentence_2.get())))
                      elif self._algo_opt.get() == "YAGO":
-                            self._result.set(str(sentenceAnalysis.yagoSim(self._token1.get(), self._token2.get(), yago_sim)))
+                            self._result.set(str(sentenceAnalysis.yagoSim(preprocessing.preprocess(self._sentence_1.get()), preprocessing.preprocess(self._sentence_2.get()), yago_sim)))
                      elif self._algo_opt.get() == "BDpedia":
-                            self._result.set(str(sentenceAnalysis.bdpediaSim(self._token1.get(), self._token2.get(), concept)))
+                            self._result.set(str(sentenceAnalysis.bdpediaSim(preprocessing.preprocess(self._sentence_1.get()), preprocessing.preprocess(self._sentence_2.get()), concept)))
                      else:
                             print("no vittu ei toimi vittu")
        
