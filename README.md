@@ -3,6 +3,10 @@ This reposity contains course project for course on NLP.
 The project aim to use data from datasets accessed from https://github.com/alexanderpanchenko/sim-eval and SSTS-131 dataset by O'shea et al. to perform various similarity analyses using various tool such as datamuse API.
 The project also aims to compare the method against results achieved by Panchenko. 
 
+To install we recomend using venv, with python 3.11, and then running pip install -r- requirements.txt
+DO NOTE: sematch is relatively out of date library that may need manual patches to function properly. 
+Most propable issue: https://github.com/gsi-upm/sematch/issues/40
+
 
 References
 ==========
