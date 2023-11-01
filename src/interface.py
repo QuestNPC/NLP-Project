@@ -81,8 +81,8 @@ class UI:
               algo_opt_3 = ttk.Radiobutton(master=self._root, text="GloVe", variable=self._algo_opt, value="GloVe")
               algo_opt_4 = ttk.Radiobutton(master=self._root, text="Datamuse default", variable=self._algo_opt, value="Default")
               algo_opt_5 = ttk.Radiobutton(master=self._root, text="Datamuse best", variable=self._algo_opt, value="Best")
-              algo_opt_6 = ttk.Radiobutton(master=self._root, text="BDpedia", variable=self._algo_opt, value="BDpedia")
-              algo_opt_7 = ttk.Radiobutton(master=self._root, text="YAGO", variable=self._algo_opt, value="YAGO")
+              algo_opt_6 = ttk.Radiobutton(master=self._root, text="BDpedia concepts", variable=self._algo_opt, value="BDpedia")
+              algo_opt_7 = ttk.Radiobutton(master=self._root, text="YAGO concepts", variable=self._algo_opt, value="YAGO")
 
               algo_opt_1.grid(row=11, column=0, padx=5, pady=5)
               algo_opt_2.grid(row=12, column=0, padx=5, pady=5)
@@ -100,32 +100,30 @@ class UI:
               self._result = StringVar()
               self._result.set("*similarity score comes here*")
               result_heading = ttk.Label(master=self._root, text="Similarity score:")
-              result_heading.grid(row=25, column=0, padx=5, pady=5)
+              result_heading.grid(row=23, column=0, padx=5, pady=5)
 
               result_score = ttk.Label(master=self._root, textvariable=self._result)
-              result_score.grid(row=25, column=1, padx=5, pady=5)
+              result_score.grid(row=23, column=1, padx=5, pady=5)
               
               # tokens
               self._token1 = StringVar()
               self._token1.set("")
-              result_heading = ttk.Label(master=self._root, text="Tokens sentence 1:")
-              result_heading.grid(row=22, column=0, padx=5, pady=5)
+              result_heading = ttk.Label(master=self._root, text="Tokens:")
+              result_heading.grid(row=21, column=0, padx=5, pady=5)
 
               result_score = ttk.Label(master=self._root, textvariable=self._token1)
-              result_score.grid(row=22, column=1, padx=5, pady=5)
+              result_score.grid(row=21, column=1, padx=5, pady=5)
               
               self._token2 = StringVar()
               self._token2.set("")
-              result_heading = ttk.Label(master=self._root, text="Tokens sentence 2:")
-              result_heading.grid(row=23, column=0, padx=5, pady=5)
 
               result_score = ttk.Label(master=self._root, textvariable=self._token2)
-              result_score.grid(row=23, column=1, padx=5, pady=5)
+              result_score.grid(row=21, column=3, padx=5, pady=5)
               
               # preprocesses
               self._preprocess1 = StringVar()
               self._preprocess1.set("")
-              result_heading = ttk.Label(master=self._root, text="Limited preprocess 1:")
+              result_heading = ttk.Label(master=self._root, text="Limited preprocess output:")
               result_heading.grid(row=20, column=0, padx=5, pady=5)
 
               result_score = ttk.Label(master=self._root, textvariable=self._preprocess1)
@@ -133,11 +131,9 @@ class UI:
               
               self._preprocess2 = StringVar()
               self._preprocess2.set("")
-              result_heading = ttk.Label(master=self._root, text="Limited preprocess 2:")
-              result_heading.grid(row=21, column=0, padx=5, pady=5)
 
               result_score = ttk.Label(master=self._root, textvariable=self._preprocess2)
-              result_score.grid(row=21, column=1, padx=5, pady=5)
+              result_score.grid(row=20, column=3, padx=5, pady=5)
 
 window = Tk()
 window.title("Interface test")
