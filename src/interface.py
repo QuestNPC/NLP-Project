@@ -147,6 +147,7 @@ window = Tk()
 window.title("Interface test")
 
 # models
+fasttext.util.download_model('en', if_exists='ignore')
 ftmodel = fasttext.load_model('cc.en.300.bin')
 w2vmodel = gensim.downloader.load('word2vec-google-news-300')
 glovemodel = torchtext.vocab.GloVe(name='6B', dim=300)

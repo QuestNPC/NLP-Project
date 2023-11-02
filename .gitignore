@@ -3,3 +3,4 @@ venv
 cc.en.300.bin
 test.csv
 .vector_cache
+**/__pycache__
