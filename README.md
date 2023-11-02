@@ -9,6 +9,11 @@ Most probable issue: https://github.com/gsi-upm/sematch/issues/40
 
 You can run demo with GUI from by running interface.py
 
+dataAnalysis.py contains code to accompish tasks regarding word similarity
+datamuseSentence.py contains code to accompish tasks on using datamuse on sentences
+sentenceAnalysis.py code to accompish tasks using other methods to evaluate sentence similarity
+interface.py contains code for demo GUI
+
 References
 ==========
 PANCHENKO, A. (2012). sim-eval: A tool for evaluation of semantic similarity measures. https://github.com/alexanderpanchenko/sim-eval
