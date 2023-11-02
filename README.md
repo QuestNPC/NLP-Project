@@ -5,8 +5,9 @@ The project also aims to compare the method against results achieved by Panchenk
 
 To install we recomend using venv, with python 3.11, and then running pip install -r- requirements.txt
 DO NOTE: sematch is relatively out of date library that may need manual patches to function properly. 
-Most propable issue: https://github.com/gsi-upm/sematch/issues/40
+Most probable issue: https://github.com/gsi-upm/sematch/issues/40
 
+You can run demo with GUI from by running interface.py
 
 References
 ==========
